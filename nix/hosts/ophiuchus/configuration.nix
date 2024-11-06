@@ -1,20 +1,26 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, inputs, outputs, ... }:
-
 {
-  imports = [ # Include the results of the hardware scan.
+  config,
+  pkgs,
+  inputs,
+  outputs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./../../modules/nixos
     inputs.home-manager.nixosModules.home-manager
   ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [ "ntfs" ];
+  boot = {
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+    supportedFilesystems = ["ntfs"];
+  };
 
   networking = {
     hostName = "ophiuchus";
@@ -25,31 +31,33 @@
   time.timeZone = "America/Bogota";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "es_CO.UTF-8";
-    LC_IDENTIFICATION = "es_CO.UTF-8";
-    LC_MEASUREMENT = "es_CO.UTF-8";
-    LC_MONETARY = "es_CO.UTF-8";
-    LC_NAME = "es_CO.UTF-8";
-    LC_NUMERIC = "es_CO.UTF-8";
-    LC_PAPER = "es_CO.UTF-8";
-    LC_TELEPHONE = "es_CO.UTF-8";
-    LC_TIME = "es_CO.UTF-8";
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_ADDRESS = "es_CO.UTF-8";
+      LC_IDENTIFICATION = "es_CO.UTF-8";
+      LC_MEASUREMENT = "es_CO.UTF-8";
+      LC_MONETARY = "es_CO.UTF-8";
+      LC_NAME = "es_CO.UTF-8";
+      LC_NUMERIC = "es_CO.UTF-8";
+      LC_PAPER = "es_CO.UTF-8";
+      LC_TELEPHONE = "es_CO.UTF-8";
+      LC_TIME = "es_CO.UTF-8";
+    };
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "latam";
-    variant = "";
+  services = {
+    xserver = {
+      enable = true;
+      # Enable the GNOME Desktop Environment.
+      displayManager.gdm.enable = true;
+      desktopManager.gnome.enable = true;
+      # Configure keymap in X11
+      xkb = {
+        layout = "latam";
+        variant = "";
+      };
+    };
   };
 
   # Configure console keymap
@@ -88,9 +96,9 @@
   users.users.jguevara = {
     isNormalUser = true;
     description = "jguevara";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -121,5 +129,5 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 }
