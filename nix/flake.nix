@@ -40,7 +40,7 @@
       ophiuchus = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
-          ./hosts/ophiuchus/configuration.nix
+          ./hosts/ophiuchus
         ];
       };
     };
