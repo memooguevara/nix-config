@@ -15,7 +15,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
-      url = "path:/home/jguevara/nixvim";
+      # url = "path:/home/jguevara/nixvim";
+      url = "github:memooguevara/nix-neovim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
