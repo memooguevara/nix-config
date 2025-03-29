@@ -2,7 +2,7 @@
   programs.alacritty = {
     enable = true;
     settings = {
-      general.import = with pkgs; [alacritty-theme.tokyo-night];
+      general.import = with pkgs; [alacritty-theme.tokyo_night];
       font = {
         normal.family = "IosevkaTerm NFM";
         size = 18;
