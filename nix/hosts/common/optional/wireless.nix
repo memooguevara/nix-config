@@ -2,7 +2,7 @@
   hardware.bluetooth = {
     enable = false;
   };
-  networking.wireless = {
-    enable = true;
-  };
+  # networking.wireless = {
+  #   enable = true;
+  # };
 }
