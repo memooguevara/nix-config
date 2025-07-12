@@ -3,7 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    systems.url = "github:nix-systems/default-linux";
+    hardware.url = "github:nixos/nixos-hardware";
+    impermanence.url = "github:nix-community/impermanence";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,36 +28,45 @@
     self,
     nixpkgs,
     home-manager,
+    systems,
     alacritty-theme,
     ...
   } @ inputs: let
     inherit (self) outputs;
-    system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [alacritty-theme.overlays.default];
-    };
+    lib = nixpkgs.lib // home-manager.lib;
+    forEachSystem = f: lib.genAttrs (import systems) (system: f pkgsFor.${system});
+    pkgsFor = lib.genAttrs (import systems) (
+      system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+          overlays = [alacritty-theme.overlays.default];
+        }
+    );
   in {
+    inherit lib;
+    nixosModules = import ./modules/nixos;
+    homeManagerModules = import ./modules/home-manager;
+
+    formatter = forEachSystem (pkgs: pkgs.alejandra);
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#ophiuchus'
     nixosConfigurations = {
-      ophiuchus = nixpkgs.lib.nixosSystem {
+      # Main laptop
+      ophiuchus = lib.nixosSystem {
+        modules = [./hosts/ophiuchus];
         specialArgs = {inherit inputs outputs;};
-        modules = [
-          ./hosts/ophiuchus
-        ];
       };
     };
 
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#jguevara@ophiuchus'
     homeConfigurations = {
-      "jguevara@ophiuchus" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+      # Main laptop
+      "jguevara@ophiuchus" = lib.homeManagerConfiguration {
+        modules = [./home/jguevara/ophiuchus.nix ./home/jguevara/nixpkgs.nix];
+        pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
-        modules = [
-          ./hosts/ophiuchus/home.nix
-        ];
       };
     };
   };

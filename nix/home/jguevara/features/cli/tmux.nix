@@ -1,6 +1,4 @@
-{ inputs, lib, config, pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs.tmux = {
     enable = true;
     shortcut = "a";
