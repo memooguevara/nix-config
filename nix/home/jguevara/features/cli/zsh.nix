@@ -5,7 +5,7 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    initExtra = ''
+    initContent = ''
       if [[ $- == *i* ]] && [[ $TMUX == "" ]] && [[ -t 1 ]]; then
         exec tmux
       fi
