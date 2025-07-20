@@ -4,5 +4,6 @@
     ./firefox.nix
 
     ./alacritty.nix
+    ./ghostty.nix
   ];
 }
