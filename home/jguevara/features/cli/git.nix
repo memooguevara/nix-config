@@ -2,10 +2,13 @@
   home.packages = with pkgs; [lazygit];
   programs.git = {
     enable = true;
-    userName = "Jonathan Guevara";
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       pull.rebase = false;
+      user = {
+        name = "Jonathan Guevara";
+        email = "memooguevara@gmail.com";
+      };
     };
   };
 }
