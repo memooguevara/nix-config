@@ -50,21 +50,32 @@
 
     formatter = forEachSystem (pkgs: pkgs.alejandra);
     # NixOS configuration entrypoint
-    # Available through 'nixos-rebuild --flake .#ophiuchus'
+    # Available through 'nixos-rebuild switch --flake .#ophiuchus'
     nixosConfigurations = {
       # Main laptop
       ophiuchus = lib.nixosSystem {
         modules = [./hosts/ophiuchus];
         specialArgs = {inherit inputs outputs;};
       };
+      # Virtual laptop
+      volans = lib.nixosSystem {
+        modules = [./hosts/volans];
+        specialArgs = {inherit inputs outputs;};
+      };
     };
 
     # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#jguevara@ophiuchus'
+    # Available through 'home-manager switch --flake .#jguevara@ophiuchus'
     homeConfigurations = {
       # Main laptop
       "jguevara@ophiuchus" = lib.homeManagerConfiguration {
         modules = [./home/jguevara/ophiuchus.nix ./home/jguevara/nixpkgs.nix];
+        pkgs = pkgsFor.x86_64-linux;
+        extraSpecialArgs = {inherit inputs outputs;};
+      };
+      # Virtual laptop
+      "jguevara@volans" = lib.homeManagerConfiguration {
+        modules = [./home/jguevara/volans.nix ./home/jguevara/nixpkgs.nix];
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
       };
